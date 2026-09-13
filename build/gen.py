@@ -18,7 +18,7 @@ MAXW = 2000
 # browsers that already fetched the old bytes at that exact path keep
 # serving them from cache instead of the replacement. Also drives the
 # style.css/main.js cache-busting query strings.
-VERSION = "111"
+VERSION = "112"
 
 _dims_cache = {}
 
@@ -276,7 +276,6 @@ PROJECTS = [
   "title": "Into the Light",
   "grid_label": "UI/UX  ·  Interaction  ·  Web design",
   "hero_video": "assets/video/into-the-light/homepage.mp4",
-  "grid_video": "assets/video/into-the-light/homepage.mp4",
   "grid_still": "assets/img/into-the-light/thumb-laptop.jpg",
   "flow": [
    ("h", "Overview"),
@@ -517,7 +516,15 @@ def render_grid():
             return (f"assets/img/{p['slug']}/{g[0].name}?v={VERSION}", g[0]) if g else (None, None)
         num = f"{total - n:02d}"
 
-        if p.get("grid_video"):
+        if p.get("grid_still") and not p.get("grid_video"):
+            # A plain static thumbnail — no hover video, no flick frames.
+            still = p["grid_still"]
+            media = (
+                f'<img loading="lazy" decoding="async"{dim_attrs(ROOT / still)} '
+                f'src="{still}?v={VERSION}" alt="{esc(p["title"])}">'
+            )
+            frames_attr = ""
+        elif p.get("grid_video"):
             # A still (the "laptop mockup") at rest; a short muted/looping
             # clip crossfades in on hover instead of the old multi-frame
             # image flick — see .proj-video in style.css / setActive() in
@@ -537,16 +544,7 @@ def render_grid():
             frames = [fp for fp, _ in found if fp]
             src = frames[0] if frames else ""
             srcpath = next((lp for fp, lp in found if fp), None)
-            # Two stacked layers so the hover flick-through can crossfade
-            # between frames (a straight src-swap on one <img> is an
-            # instant hard cut, which is what reads as "glitchy") — see
-            # .proj-frame in style.css and the lane/setActive logic in
-            # main.js for the alternating fade.
-            media = (
-                f'<img class="proj-frame is-shown" loading="lazy" decoding="async"'
-                f'{dim_attrs(srcpath)} src="{src}" alt="{esc(p["title"])}">'
-                f'<img class="proj-frame" alt="{esc(p["title"])}">'
-            )
+            media = f'<img loading="lazy" decoding="async"{dim_attrs(srcpath)} src="{src}" alt="{esc(p["title"])}">'
             frames_attr = f' data-frames="{",".join(frames)}"'
 
         return (

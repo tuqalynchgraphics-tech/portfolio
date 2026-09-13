@@ -231,39 +231,20 @@
       var lane = panels.map(function (panel) {
         var frames = (panel.dataset.frames || "").split(",")
           .map(function (s) { return s.trim(); }).filter(Boolean);
-        // preload + decode so a frame is ready by the time its layer fades in
+        // preload + decode so the frame swap never blocks the main thread
         frames.forEach(function (src) {
           var im = new Image(); im.src = src;
           if (im.decode) im.decode().catch(function () {});
         });
-        var imgs = [].slice.call(panel.querySelectorAll(".proj-frame"));
         return {
-          panel: panel, imgs: imgs,
+          panel: panel,
+          img: panel.querySelector(".proj-media img"),
+          base: (panel.querySelector(".proj-media img") || {}).src,
           video: panel.querySelector(".proj-video"),
-          frames: frames, timer: null, k: 0, topShown: false
+          frames: frames, timer: null, k: 0
         };
       });
       var active = -1;
-
-      // Two stacked layers (imgs[0] below, imgs[1] above) crossfade by
-      // alternating which one is on top: load the next frame into whichever
-      // layer is currently hidden, then fade that layer in (or the visible
-      // one out) to reveal it — every step is the same equal-duration
-      // transition, so the cycle reads as one smooth, evenly-paced loop
-      // instead of a hard src-swap flash.
-      var FRAME_MS = 900;
-      var advance = function (lane) {
-        lane.k = (lane.k + 1) % lane.frames.length;
-        var next = lane.frames[lane.k];
-        if (!lane.topShown) {
-          lane.imgs[1].src = next;
-          lane.imgs[1].classList.add("is-shown");
-        } else {
-          lane.imgs[0].src = next;
-          lane.imgs[0].classList.remove("is-shown");
-        }
-        lane.topShown = !lane.topShown;
-      };
 
       var setActive = function (i) {
         if (i === active) return;
@@ -271,11 +252,7 @@
           var prev = lane[active];
           prev.panel.classList.remove("is-active");
           if (prev.timer) { clearInterval(prev.timer); prev.timer = null; }
-          if (prev.imgs.length > 1) {
-            prev.imgs[1].classList.remove("is-shown");
-            prev.imgs[0].classList.add("is-shown");
-            prev.k = 0; prev.topShown = false;
-          }
+          if (prev.img) prev.img.src = prev.base;
           if (prev.video) { prev.video.pause(); prev.video.currentTime = 0; }
         }
         active = i;
@@ -287,8 +264,12 @@
             cur.video.currentTime = 0;
             cur.video.play().catch(function () {});
           }
-          if (cur.imgs.length > 1 && cur.frames.length > 1) {
-            cur.timer = setInterval(function () { advance(cur); }, FRAME_MS);
+          if (cur.img && cur.frames.length > 1) {
+            cur.k = 0;
+            cur.timer = setInterval(function () {
+              cur.k = (cur.k + 1) % cur.frames.length;
+              cur.img.src = cur.frames[cur.k];
+            }, 450);
           }
         } else {
           row.classList.remove("hovering");
