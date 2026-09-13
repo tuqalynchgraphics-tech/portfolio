@@ -496,7 +496,8 @@ a{color:inherit;text-decoration:none}
 .foot-big{
   font-family:var(--serif);
   font-size:clamp(1.9rem,6vw,4.4rem);line-height:1.16;letter-spacing:-.01em;
-  width:fit-content;color:var(--muted-2);
+  width:fit-content;max-width:100%;color:var(--muted-2);
+  overflow-wrap:break-word;word-break:break-word;
   transition:color .2s ease;
 }
 .foot-big:hover{color:var(--fg)}
@@ -663,9 +664,14 @@ figure.shot img,figure.shot video{width:100%;height:auto;display:block;backgroun
   .about{grid-template-columns:1fr;gap:14px}
   .about-h{position:static}
   .about-photo{position:static;max-width:200px}
+  .foot-big{font-size:clamp(1.3rem,7.5vw,1.9rem)}
 }
 @media (max-width:640px){
   .media-inner.cols-2,.media-inner.cols-3,.media-inner.cols-4,.media-inner.cols-5{grid-template-columns:repeat(2,1fr)}
+  /* per-row overrides of the generic collapse above — set via R(..., mobile_cols=N) */
+  .cs-body .media-inner.mcols-1{grid-template-columns:1fr}
+  .cs-body .media-inner.mcols-2{grid-template-columns:repeat(2,1fr)}
+  .cs-body .media-inner.mcols-3{grid-template-columns:repeat(3,1fr)}
 }
 @media (prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}

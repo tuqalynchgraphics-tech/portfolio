@@ -198,6 +198,26 @@
   }
 
   /* =====================================================================
+     Autoplay videos — the `autoplay` attribute alone is unreliable on some
+     mobile browsers (silently skipped, e.g. for a video that's still
+     off-screen while the page settles in), so every such video also gets
+     an explicit .play() call right away, retried once more the moment it
+     actually scrolls into view in case the first attempt was skipped.
+     ===================================================================== */
+  var autoVideos = [].slice.call(document.querySelectorAll("video[autoplay]"));
+  if (autoVideos.length) {
+    autoVideos.forEach(function (v) { v.play().catch(function () {}); });
+    if ("IntersectionObserver" in window) {
+      var avio = new IntersectionObserver(function (entries) {
+        entries.forEach(function (en) {
+          if (en.isIntersecting && en.target.paused) en.target.play().catch(function () {});
+        });
+      }, { threshold: 0.01 });
+      autoVideos.forEach(function (v) { avio.observe(v); });
+    }
+  }
+
+  /* =====================================================================
      Work rows — two flush images. The panel under the cursor gets .is-active
      and its row .hovering; the split then animates through a single matched
      flex-grow transition (seamless across the seam). The active panel also

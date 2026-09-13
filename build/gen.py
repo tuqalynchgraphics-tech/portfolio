@@ -18,7 +18,7 @@ MAXW = 2000
 # browsers that already fetched the old bytes at that exact path keep
 # serving them from cache instead of the replacement. Also drives the
 # style.css/main.js cache-busting query strings.
-VERSION = "104"
+VERSION = "109"
 
 _dims_cache = {}
 
@@ -45,11 +45,14 @@ def dim_attrs(path):
     return f' width="{d[0]}" height="{d[1]}"' if d else ""
 
 
-def R(items, cap=None, w=100, align="left", cols=None):
+def R(items, cap=None, w=100, align="left", cols=None, mobile_cols=None):
     """A media row. items: list of 'hash.ext' or ('hash.ext','caption').
     w: width as % of the content column. align: left|center|right.
-    cols: images across (default = len(items))."""
-    return ("row", items, cap, {"w": w, "align": align, "cols": cols})
+    cols: images across (default = len(items)). mobile_cols: override how
+    many sit side by side at the phone breakpoint (default: the generic
+    640px collapse — 2/3/4/5 across all become 2; pass 1 to stack fully, or
+    the same number as cols to force it to stay side by side)."""
+    return ("row", items, cap, {"w": w, "align": align, "cols": cols, "mobile_cols": mobile_cols})
 
 
 def HERO(h, cap=None, w=100, align="left"):
@@ -95,17 +98,17 @@ PROJECTS = [
    R(["8CplwnILsBU2NhQ6v0321pB8K5s.png"], "Brand guidelines"),
    R(["ZY5vHRPM0n06eficYs9TfxmiUc0.png"]),
    R([("EK0umuCOFMkxWdvIqPaZ4tENu6w.jpg", "Brand booklets"),
-      ("Qxs2inOEIf79bdpGKhPyp3E1Jk.jpg", "Theatre tickets")]),
+      ("Qxs2inOEIf79bdpGKhPyp3E1Jk.jpg", "Theatre tickets")], mobile_cols=1),
    R(["cw-photo-bus.jpg"], "Street bus advertising"),
    R(["696UUrCCL10cHGYVxmgXNEDrSQ.png", "MTnnFfoY22uUGBxR0ADca9hmoU.png",
-      "dtx3LTsoozdYbt19NBVPlL3yM.png"], "Social media posts"),
+      "dtx3LTsoozdYbt19NBVPlL3yM.png"], "Social media posts", mobile_cols=3),
    R(["ytGMHe1AMsv83zhT6HYnVC7IR5c.jpg"]),
    R(["DdrC9p3v1l2veE75EprzTtQXcc.jpg", "UoWC1dKZbZZfgDfMRCcrU4EhgBE.jpg"],
      "'About our Library' booklet"),
    R(["Dd64zAPEau3tPtYFv0I7eNyiy0k.png"]),
    R(["cw-photo-business-cards.jpg"], "Business cards"),
    R(["vsLqr6tDNVersIrx3dwsKmRA1MY.jpg", "cw-photo-booklet-spread2.jpg"],
-     "Spreads from brand booklet", cols=2),
+     "Spreads from brand booklet", cols=2, mobile_cols=1),
    R(["HxRjXkheYSqiO8vzQrUubjOXOo.jpg"], "Laser cut entrance sign"),
    R(["cw-mockup-card.jpg"], "Business card", w=55, align="center"),
    ("h", "Process & experimentation"),
@@ -128,12 +131,12 @@ PROJECTS = [
    R(["andromeda-lockup-light.png", "andromeda-lockup-dark.png"],
      "Wordmark lockup, light and dark", cols=2),
    R(["andromeda-poster.jpg", "andromeda-event-screen.jpg"],
-     "In the wild: a poster and an event screen", cols=2),
+     "In the wild: a poster and an event screen", cols=2, mobile_cols=1),
    R(["andromeda-mark-filled.png", "andromeda-mark-outline.png", "andromeda-mark-icon.png"],
-     "The mark, in every version", cols=3),
+     "The mark, in every version", cols=3, mobile_cols=3),
    R(["andromeda-type-display.png", "andromeda-type-text.png"],
-     "Cabinet Grotesk for display, Erode for text", cols=2),
-   R([("andromeda-business-card.jpg", "Business card"), ("andromeda-appicon.jpg", "App icon")], cols=2),
+     "Cabinet Grotesk for display, Erode for text", cols=2, mobile_cols=1),
+   R([("andromeda-business-card.jpg", "Business card"), ("andromeda-appicon.jpg", "App icon")], cols=2, mobile_cols=1),
    R(["andromeda-palette.png"], "Colour palette", w=44, align="center"),
    R(["andromeda-merch.jpg"], "Merch: embroidered tee and cap"),
    R(["andromeda-social-posts.jpg"], "Social media posts"),
@@ -235,8 +238,8 @@ PROJECTS = [
    R(["PRE80yxZ79FM2JWdQpiFavMokZM.jpg"]),
    R(["CuqAbKOMYFFGGsWCMLNUI5Mfc.jpg"], "Digital tool"),
    R(["uOlkTQWLcP8H8Fx48VPWUiM3IQ.jpg"], "Publication spread"),
-   R([("LtzWNtNCCnOLu1Ww94bYeIJxw.jpg", "Mobile UI"),
-      ("X4Bp44hfzFAEY8MSwen8DWsnW9s.jpg", "Desktop UI")]),
+   R(["LtzWNtNCCnOLu1Ww94bYeIJxw.jpg", "X4Bp44hfzFAEY8MSwen8DWsnW9s.jpg"],
+     "Mobile UI", mobile_cols=1),
    ("h", "Process & experimentation"),
    ("p", "For the manual, I worked through a consistent page grid that could hold both dense geometric diagrams and short instructional text without feeling cluttered, mirroring the patterns themselves in their symmetry. I then tested various formats alongside the publication, such as a zine on red paper as displayed on the right."),
    ("p", "For the digital tool, I experimented with translating those same hand-drawn construction rules (symmetry groups, star points, interlace depth) into code, then iterated on the interface until adjusting a single parameter could visibly show how computation strips away the slowness and unpredictability of hand construction."),
@@ -257,7 +260,7 @@ PROJECTS = [
    ("tags", "Type design  ·  Conceptual design  ·  Publishing  ·  Print  ·  Calligraphy"),
    R(["KS1J7vcQB92JLMpcQtptX6Gmy7c.jpg"], "Publication box"),
    R(["jyHgrqiMyJpMa8jIVbDGlgwP1uw.png"], "Poem written in Fasila"),
-   R(["2Fm7jPfMBaWUzWTgxu9YC1HtX0Y.jpg", "sOBYgFHsedIBp1209tEPodFrErg.jpg"]),
+   R(["2Fm7jPfMBaWUzWTgxu9YC1HtX0Y.jpg", "sOBYgFHsedIBp1209tEPodFrErg.jpg"], mobile_cols=1),
    R(["vTBua1QqZLZx3Owze104tWM6Q.png"], "Translation guide - IPA to Fasila"),
    R(["SWthJnkHzMrsCuad0IotMBAF0.png"], "'Between worlds' written in Fasila"),
    ("h", "Process & experimentation"),
@@ -274,7 +277,7 @@ PROJECTS = [
   "grid_label": "UI/UX  ·  Interaction  ·  Web design",
   "hero_video": "assets/video/into-the-light/homepage.mp4",
   "grid_video": "assets/video/into-the-light/homepage.mp4",
-  "grid_still": "assets/img/into-the-light/thumb-still.jpg",
+  "grid_still": "assets/img/into-the-light/thumb-laptop.jpg",
   "flow": [
    ("h", "Overview"),
    ("p", "Into the Light is an interactive website raising awareness of moth ecology and the impact of artificial light pollution on UK moth populations, built by combining ecological research with coded interaction rather than static information design. Throughout the site the user acts as the light source itself as moths are drawn to the cursor, disappear on contact, and visibly decline across a data-driven timeline from 1900 to 2024, making the reader complicit in the problem rather than a passive observer of it."),
@@ -393,6 +396,8 @@ def render_project(proj):
             if shared:
                 figs.append(f'<p class="row-cap">{esc(shared)}</p>')
             colcls = f' cols-{ncols}' if n > 1 else ' cols-1'
+            if lay.get("mobile_cols"):
+                colcls += f' mcols-{lay["mobile_cols"]}'
             parts.append(
                 f'<div class="media-row" data-align="{lay["align"]}">'
                 f'<div class="media-inner{colcls}" style="--w:{lay["w"]}%">'
@@ -502,6 +507,33 @@ SUMMARIES = {
 }
 
 
+THUMB_MAXW = 900
+
+
+def make_thumb(path):
+    """A downscaled copy of a (often multi-MB, 3000px+) case-study image for
+    the homepage hover-flick — those swap every 300ms, so the full-size
+    original can visibly stall/flash the first time a row is hovered before
+    the browser has it cached. A ~900px copy decodes instantly instead."""
+    if path is None or not path.exists():
+        return None
+    out_dir = path.parent / ".thumbs"
+    out = out_dir / path.name
+    if out.exists() and out.stat().st_mtime >= path.stat().st_mtime:
+        return out
+    with Image.open(path) as im:
+        if im.width <= THUMB_MAXW:
+            return path
+        out_dir.mkdir(parents=True, exist_ok=True)
+        h = round(im.height * THUMB_MAXW / im.width)
+        ext = path.suffix.lower()
+        if ext in (".jpg", ".jpeg"):
+            im.convert("RGB").resize((THUMB_MAXW, h), Image.LANCZOS).save(out, quality=82)
+        else:
+            im.resize((THUMB_MAXW, h), Image.LANCZOS).save(out)
+    return out
+
+
 def render_grid():
     total = len(PROJECTS)
 
@@ -509,7 +541,11 @@ def render_grid():
         d = IMG_ROOT / p["slug"]
         def fpath(idx):
             g = sorted(d.glob(idx + ".*"))
-            return (f"assets/img/{p['slug']}/{g[0].name}?v={VERSION}", g[0]) if g else (None, None)
+            if not g:
+                return (None, None)
+            thumb = make_thumb(g[0])
+            rel = thumb.relative_to(ROOT)
+            return (f"{rel.as_posix()}?v={VERSION}", thumb)
         num = f"{total - n:02d}"
 
         if p.get("grid_video"):
