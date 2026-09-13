@@ -1,0 +1,9 @@
+{
+  "name": "portfolio",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Tuqa Lynch portfolio - static site",
+  "scripts": {
+    "start": "npx --yes serve -s . -l ${PORT:-4173}"
+  }
+}
