@@ -18,7 +18,7 @@ MAXW = 2000
 # browsers that already fetched the old bytes at that exact path keep
 # serving them from cache instead of the replacement. Also drives the
 # style.css/main.js cache-busting query strings.
-VERSION = "99"
+VERSION = "104"
 
 _dims_cache = {}
 
@@ -133,7 +133,7 @@ PROJECTS = [
      "The mark, in every version", cols=3),
    R(["andromeda-type-display.png", "andromeda-type-text.png"],
      "Cabinet Grotesk for display, Erode for text", cols=2),
-   R(["andromeda-business-card.jpg"], "Business card", w=55, align="center"),
+   R([("andromeda-business-card.jpg", "Business card"), ("andromeda-appicon.jpg", "App icon")], cols=2),
    R(["andromeda-palette.png"], "Colour palette", w=44, align="center"),
    R(["andromeda-merch.jpg"], "Merch: embroidered tee and cap"),
    R(["andromeda-social-posts.jpg"], "Social media posts"),
@@ -272,13 +272,17 @@ PROJECTS = [
   "slug": "into-the-light",
   "title": "Into the Light",
   "grid_label": "UI/UX  ·  Interaction  ·  Web design",
+  "hero_video": "assets/video/into-the-light/homepage.mp4",
+  "grid_video": "assets/video/into-the-light/homepage.mp4",
+  "grid_still": "assets/img/into-the-light/thumb-still.jpg",
   "flow": [
-   HERO("BcB1CDYQ2tQZdFkNlRvGCnRuQwE.png", w=50, align="center"),
    ("h", "Overview"),
    ("p", "Into the Light is an interactive website raising awareness of moth ecology and the impact of artificial light pollution on UK moth populations, built by combining ecological research with coded interaction rather than static information design. Throughout the site the user acts as the light source itself as moths are drawn to the cursor, disappear on contact, and visibly decline across a data-driven timeline from 1900 to 2024, making the reader complicit in the problem rather than a passive observer of it."),
    ("tags", "UI/UX  ·  Interaction design  ·  Web design  ·  Creative coding  ·  Data visualisation"),
-   R(["3d9CXRtZAzbZADxQTNVULGyKTGE.png"], "Homepage", w=28, align="right"),
    R(["JK0zWubc8ukot7iaPLqtwdLf04.png"], "Typography guidelines", w=50, align="center"),
+   VIDEO("assets/video/into-the-light/moth.mp4", "The Moth"),
+   VIDEO("assets/video/into-the-light/threat.mp4", "The Threat"),
+   VIDEO("assets/video/into-the-light/takeaction.mp4", "Take Action"),
    ("h", "Process & experimentation"),
    ("p", "I began by sketching wireframes by hand to work out the site's structure, how a visitor would move between The Moth, The Threat, The Archive, and Take Action, so the narrative arc came together before any of it existed in code. From there I iterated through many different coded interactions for the cursor-as-light mechanic, testing different moth movement patterns, timing for disappearance on contact, and how aggressively they'd swarm, refining each version until the interaction felt like it was making an argument about complicity rather than just showing off a hover effect."),
    R(["S0fg6Ff6Rrrhd7POSHLv8Ovf0.png"], w=63, align="right"),
@@ -482,7 +486,7 @@ GRID_FRAMES = {
     "scrapage": ("03", "01", "04"),
     "islamic-patterns": ("01", "02", "04"),
     "fasila": ("01", "02", "04"),
-    "into-the-light": ("01", "03", "04"),
+    "into-the-light": ("01", "02", "03"),
 }
 
 

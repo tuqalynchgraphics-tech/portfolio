@@ -267,6 +267,27 @@
         p.addEventListener("focusout", function () { setActive(-1); });
       });
     });
+  } else if (!reduced && "IntersectionObserver" in window) {
+    // Touch/no-hover devices have no pointer to drive the reveal above, so
+    // the same colour/darken-overlay swap is triggered by scroll position
+    // instead — a panel gains .is-active (and its video starts) once it's
+    // scrolled into the middle band of the screen, and loses it again as it
+    // scrolls back out, in place of a hover that can never fire here.
+    var mobileProjs = [].slice.call(document.querySelectorAll(".proj"));
+    var mio = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        var panel = en.target;
+        var video = panel.querySelector(".proj-video");
+        if (en.isIntersecting) {
+          panel.classList.add("is-active");
+          if (video) { video.currentTime = 0; video.play().catch(function () {}); }
+        } else {
+          panel.classList.remove("is-active");
+          if (video) { video.pause(); video.currentTime = 0; }
+        }
+      });
+    }, { rootMargin: "-40% 0px -40% 0px", threshold: 0 });
+    mobileProjs.forEach(function (p) { mio.observe(p); });
   }
 
   /* =====================================================================
