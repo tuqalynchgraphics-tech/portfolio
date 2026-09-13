@@ -321,11 +321,18 @@ a{color:inherit;text-decoration:none}
 .proj-row.hovering > .proj:nth-child(2):not(.is-active) .proj-media{transform:translateX(23.08%) scale(.7692)} /* hover: small */
 
 .proj-media img{
+  position:absolute;inset:0;
   width:100%;height:100%;object-fit:cover;display:block;
   filter:grayscale(1);
   transition:filter .45s ease;
 }
 .proj.is-active .proj-media img{filter:grayscale(0)}
+/* the hover flick-through is two stacked layers crossfading, not one <img>
+   doing a hard src-swap (which reads as a glitchy flash) — see the lane/
+   setActive logic in main.js. The video-preview tiles' single plain <img>
+   never gets this class, so it just stays fully opaque as before. */
+.proj-frame{opacity:0;transition:filter .45s ease,opacity .5s ease}
+.proj-frame.is-shown{opacity:1}
 /* a handful of projects show a short looping clip instead of the flicked
    frames — it sits over the still (the "laptop mockup") and only crossfades
    in once hovered, so at rest the tile is just the static image */

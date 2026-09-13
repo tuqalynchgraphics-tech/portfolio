@@ -18,7 +18,7 @@ MAXW = 2000
 # browsers that already fetched the old bytes at that exact path keep
 # serving them from cache instead of the replacement. Also drives the
 # style.css/main.js cache-busting query strings.
-VERSION = "109"
+VERSION = "111"
 
 _dims_cache = {}
 
@@ -132,8 +132,6 @@ PROJECTS = [
      "Wordmark lockup, light and dark", cols=2),
    R(["andromeda-poster.jpg", "andromeda-event-screen.jpg"],
      "In the wild: a poster and an event screen", cols=2, mobile_cols=1),
-   R(["andromeda-mark-filled.png", "andromeda-mark-outline.png", "andromeda-mark-icon.png"],
-     "The mark, in every version", cols=3, mobile_cols=3),
    R(["andromeda-type-display.png", "andromeda-type-text.png"],
      "Cabinet Grotesk for display, Erode for text", cols=2, mobile_cols=1),
    R([("andromeda-business-card.jpg", "Business card"), ("andromeda-appicon.jpg", "App icon")], cols=2, mobile_cols=1),
@@ -143,6 +141,8 @@ PROJECTS = [
    VIDEO("assets/video/andromeda/site-walkthrough.mp4", "Site walkthrough"),
    R(["andromeda-social-tile.png", "andromeda-social-halftone.png"],
      "Social tile treatments", cols=2),
+   R(["andromeda-mark-filled.png", "andromeda-mark-outline.png", "andromeda-mark-icon.png"],
+     "The mark, in every version", cols=3, mobile_cols=3),
   ],
  },
  {
@@ -486,7 +486,7 @@ PAGE_TMPL = """<!doctype html>
 GRID_FRAMES = {
     "canada-water-library": ("01", "06", "19", "08"),
     "holistic-transformation-management": ("01", "03", "13"),
-    "andromeda": ("05", "mac2", "04", "11"),
+    "andromeda": ("05", "mac2", "04", "08"),
     "azaz-labs": ("01", "02", "06"),
     "scrapage": ("03", "01", "04"),
     "islamic-patterns": ("01", "02", "04"),
@@ -507,33 +507,6 @@ SUMMARIES = {
 }
 
 
-THUMB_MAXW = 900
-
-
-def make_thumb(path):
-    """A downscaled copy of a (often multi-MB, 3000px+) case-study image for
-    the homepage hover-flick — those swap every 300ms, so the full-size
-    original can visibly stall/flash the first time a row is hovered before
-    the browser has it cached. A ~900px copy decodes instantly instead."""
-    if path is None or not path.exists():
-        return None
-    out_dir = path.parent / ".thumbs"
-    out = out_dir / path.name
-    if out.exists() and out.stat().st_mtime >= path.stat().st_mtime:
-        return out
-    with Image.open(path) as im:
-        if im.width <= THUMB_MAXW:
-            return path
-        out_dir.mkdir(parents=True, exist_ok=True)
-        h = round(im.height * THUMB_MAXW / im.width)
-        ext = path.suffix.lower()
-        if ext in (".jpg", ".jpeg"):
-            im.convert("RGB").resize((THUMB_MAXW, h), Image.LANCZOS).save(out, quality=82)
-        else:
-            im.resize((THUMB_MAXW, h), Image.LANCZOS).save(out)
-    return out
-
-
 def render_grid():
     total = len(PROJECTS)
 
@@ -541,11 +514,7 @@ def render_grid():
         d = IMG_ROOT / p["slug"]
         def fpath(idx):
             g = sorted(d.glob(idx + ".*"))
-            if not g:
-                return (None, None)
-            thumb = make_thumb(g[0])
-            rel = thumb.relative_to(ROOT)
-            return (f"{rel.as_posix()}?v={VERSION}", thumb)
+            return (f"assets/img/{p['slug']}/{g[0].name}?v={VERSION}", g[0]) if g else (None, None)
         num = f"{total - n:02d}"
 
         if p.get("grid_video"):
@@ -568,7 +537,16 @@ def render_grid():
             frames = [fp for fp, _ in found if fp]
             src = frames[0] if frames else ""
             srcpath = next((lp for fp, lp in found if fp), None)
-            media = f'<img loading="lazy" decoding="async"{dim_attrs(srcpath)} src="{src}" alt="{esc(p["title"])}">'
+            # Two stacked layers so the hover flick-through can crossfade
+            # between frames (a straight src-swap on one <img> is an
+            # instant hard cut, which is what reads as "glitchy") — see
+            # .proj-frame in style.css and the lane/setActive logic in
+            # main.js for the alternating fade.
+            media = (
+                f'<img class="proj-frame is-shown" loading="lazy" decoding="async"'
+                f'{dim_attrs(srcpath)} src="{src}" alt="{esc(p["title"])}">'
+                f'<img class="proj-frame" alt="{esc(p["title"])}">'
+            )
             frames_attr = f' data-frames="{",".join(frames)}"'
 
         return (
