@@ -18,7 +18,7 @@ MAXW = 2000
 # browsers that already fetched the old bytes at that exact path keep
 # serving them from cache instead of the replacement. Also drives the
 # style.css/main.js cache-busting query strings.
-VERSION = "113"
+VERSION = "114"
 
 _dims_cache = {}
 
@@ -95,8 +95,8 @@ PROJECTS = [
    ("p", "This project consists of a brand identity system for Canada Water Library governed by triangular marks derived from the angles of the building itself, and a colour palette sourced from the library’s material environment: the red of its timber bridge, the blues of the surrounding water, and the orange of the interior wood."),
    ("tags", "Brand identity  ·  Print  ·  Signage  ·  Editorial design  ·  Social media"),
    R([("cw-logo.png", "Logo"), ("gZh8WjtZhM8t598e5AqsfrEMoM.jpg", "Library Exterior")], cols=2),
-   R(["cw-mockup-banner.png"], "Street banner"),
    R(["ZY5vHRPM0n06eficYs9TfxmiUc0.png"]),
+   R(["cw-mockup-banner.png"], "Street banner"),
    R([("EK0umuCOFMkxWdvIqPaZ4tENu6w.jpg", "Brand booklets"),
       ("Qxs2inOEIf79bdpGKhPyp3E1Jk.jpg", "Theatre tickets")], mobile_cols=1),
    R(["cw-photo-bus.jpg"], "Street bus advertising"),
@@ -488,7 +488,7 @@ PAGE_TMPL = """<!doctype html>
 
 # three thumbnails flicked through on card hover (indices into assets/img/<slug>/)
 GRID_FRAMES = {
-    "canada-water-library": ("01", "06", "20", "08", "04"),
+    "canada-water-library": ("01", "06", "20", "08", "05"),
     "holistic-transformation-management": ("01", "03", "13"),
     "andromeda": ("05", "mac2", "04", "08"),
     "azaz-labs": ("01", "02", "06"),
