@@ -123,8 +123,9 @@ PROJECTS = [
   "title": "Andromeda AI",
   "grid_label": "Brand identity  ·  Type  ·  Art direction",
   "white_page": True,
+  "hero_video": "assets/video/andromeda/brand-motion.mp4",
   "flow": [
-   HERO("andromeda-hero-linkedin.png", "LinkedIn banner"),
+   HERO("andromeda-hero-linkedin.png"),
    ("h", "Overview"),
    ("p", "Andromeda AI is a bespoke AI automation studio I co-founded, where I design both the client-facing products we build and the brand and website that represent the studio itself. I built the identity around the Andromeda name itself, using one saturated violet (#5D22D6), a halftone dot texture standing in for stellar dust, and a sharp four-point sparkle mark paired with Cabinet Grotesk and Erode type to give the brand a bolder, more graphic feel."),
    ("tags", "Brand identity  ·  Type design  ·  Art direction  ·  Print  ·  Social media"),
