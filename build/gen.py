@@ -89,18 +89,21 @@ PROJECTS = [
   "title": "Canada Water Library",
   "grid_label": "Brand identity  ·  Print  ·  Signage",
   "white_page": True,
+  "hero_video": "assets/video/canada-water-library/hero-16x9.mp4",
   "flow": [
-   HERO("85k9sdvKwGG53VC2FSoCtsI07s.jpg", "Brand book & assets"),
+   HERO("85k9sdvKwGG53VC2FSoCtsI07s.jpg"),
    ("h", "Overview"),
    ("p", "This project consists of a brand identity system for Canada Water Library governed by triangular marks derived from the angles of the building itself, and a colour palette sourced from the library’s material environment: the red of its timber bridge, the blues of the surrounding water, and the orange of the interior wood."),
    ("tags", "Brand identity  ·  Print  ·  Signage  ·  Editorial design  ·  Social media"),
    R([("cw-logo.png", "Logo"), ("gZh8WjtZhM8t598e5AqsfrEMoM.jpg", "Library Exterior")], cols=2),
    R(["ZY5vHRPM0n06eficYs9TfxmiUc0.png"]),
    R(["cw-mockup-banner.png"], "Street banner"),
+   R(["85k9sdvKwGG53VC2FSoCtsI07s.jpg"], "Brand book & assets"),
    R([("EK0umuCOFMkxWdvIqPaZ4tENu6w.jpg", "Brand booklets"),
       ("Qxs2inOEIf79bdpGKhPyp3E1Jk.jpg", "Theatre tickets")], mobile_cols=1),
    R(["cw-photo-bus.jpg"], "Street bus advertising"),
-   R(["696UUrCCL10cHGYVxmgXNEDrSQ.png", "MTnnFfoY22uUGBxR0ADca9hmoU.png",
+   R(["696UUrCCL10cHGYVxmgXNEDrSQ.png",
+      ("assets/video/canada-water-library/reel-9x16.mp4", None, "MTnnFfoY22uUGBxR0ADca9hmoU.png"),
       "dtx3LTsoozdYbt19NBVPlL3yM.png"], "Social media posts", mobile_cols=3),
    R(["ytGMHe1AMsv83zhT6HYnVC7IR5c.jpg"]),
    R(["DdrC9p3v1l2veE75EprzTtQXcc.jpg", "UoWC1dKZbZZfgDfMRCcrU4EhgBE.jpg"],
@@ -380,10 +383,12 @@ def render_project(proj):
             ncols = lay["cols"] or n
             figs = []
             for e in entries:
-                h, cap = e if isinstance(e, tuple) else (e, None)
+                h, cap, *reserve = e if isinstance(e, tuple) else (e, None)
                 capm = f'<figcaption>{esc(cap)}</figcaption>' if cap else ''
                 if h.split("?")[0].rsplit(".", 1)[-1].lower() in ("mp4", "mov", "webm"):
                     # a local video file used as-is, not Framer-hosted
+                    for r_ in reserve:   # keep image file numbering stable when a video replaces an image
+                        grab(r_)
                     figs.append(
                         f'<figure class="shot"><video autoplay muted loop playsinline '
                         f'src="../{h}?v={VERSION}"></video>{capm}</figure>')
