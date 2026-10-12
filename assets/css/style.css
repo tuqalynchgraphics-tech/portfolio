@@ -664,6 +664,8 @@ figure.shot img,figure.shot video{width:100%;height:auto;display:block;backgroun
   .about{grid-template-columns:1fr;gap:14px}
   .about-h{position:static}
   .about-photo{position:static;max-width:200px}
+  /* mobile: crop the tall portrait just below the collar (jacket) */
+  .about-photo img{aspect-ratio:4/5;height:auto;object-fit:cover;object-position:50% 0}
   .foot-big{font-size:clamp(1.3rem,7.5vw,1.9rem)}
 }
 @media (max-width:640px){
