@@ -114,7 +114,7 @@ PROJECTS = [
    R(["vsLqr6tDNVersIrx3dwsKmRA1MY.jpg", "cw-photo-booklet-spread2.jpg"],
      "Spreads from brand booklet", cols=2, mobile_cols=1),
    R(["HxRjXkheYSqiO8vzQrUubjOXOo.jpg"], "Laser cut entrance sign"),
-   R(["cw-mockup-card.jpg"], "Magazine", w=55, align="center"),
+   ("skip", "cw-mockup-card.jpg"),   # Magazine image removed from the page; slot kept so image numbering stays stable
    ("h", "Process & experimentation"),
    ("p", "My process expanded from extracting the buildings’ ‘DNA’ by measuring various angles, which I thought would allow me to connect the architectural source to context such as the water and history. This allowed for infinite variations under the same systemic constraints."),
    R(["MAlDchCF4fBdidxZblApE0gh4n8.png"], w=63, align="right"),
@@ -349,6 +349,8 @@ def render_project(proj):
             hero_cap = f'<figcaption>{esc(cap)}</figcaption>' if cap else ''
             hero_w = lay["w"]
             hero_align = ALIGN[lay["align"]]
+        elif kind == "skip":
+            grab(item[1])   # keep NN.ext numbering stable; renders nothing
         elif kind == "h" and not parts and not intro_text:
             continue   # the leading "Overview" heading — folded into the intro band below
         elif kind == "p" and not parts and not intro_text:
