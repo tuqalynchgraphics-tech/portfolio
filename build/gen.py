@@ -18,7 +18,7 @@ MAXW = 2000
 # browsers that already fetched the old bytes at that exact path keep
 # serving them from cache instead of the replacement. Also drives the
 # style.css/main.js cache-busting query strings.
-VERSION = "117"
+VERSION = "118"
 
 _dims_cache = {}
 
@@ -188,6 +188,7 @@ PROJECTS = [
  {
   "slug": "azaz-labs",
   "title": "Azaz Labs",
+  "white_page": True,
   "grid_label": "Web · Product · UI/UX",
   "grid_video": "assets/video/azaz-labs/hero.mp4",
   "grid_video_loop": False,
