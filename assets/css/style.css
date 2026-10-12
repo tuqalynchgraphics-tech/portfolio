@@ -138,6 +138,8 @@ a{color:inherit;text-decoration:none}
   transition:transform .42s var(--ease),border-color .42s var(--ease);
 }
 .topbar.show{transform:none;border-bottom-color:var(--line)}
+/* project sub-pages: white bar (the homepage keeps the beige one) */
+body.case-study .topbar{background:rgba(255,255,255,.88)}
 /* Literally a shrunken version of the big masthead: same data-words build,
    same .keep/.hl/is-collapsed system (see main.js), same edge-to-edge
    50/50-word split (so "L" lands at the same horizontal midpoint the big

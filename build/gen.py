@@ -18,7 +18,7 @@ MAXW = 2000
 # browsers that already fetched the old bytes at that exact path keep
 # serving them from cache instead of the replacement. Also drives the
 # style.css/main.js cache-busting query strings.
-VERSION = "116"
+VERSION = "117"
 
 _dims_cache = {}
 
