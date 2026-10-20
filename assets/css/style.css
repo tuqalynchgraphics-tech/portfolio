@@ -625,6 +625,12 @@ figcaption,.row-cap{
 .media-inner.cols-5{grid-template-columns:repeat(5,1fr);gap:18px}
 .media-inner > .row-cap{grid-column:1/-1}
 figure.shot{margin:0}
+/* equal-height row (R(..., eqh=...)): each figure is as wide as its own
+   aspect ratio (--ar) is of the row's total, so every item ends up the same
+   height — tops and bottoms line up with no cropping, at every width */
+.media-inner.eqh{display:flex;flex-wrap:wrap;align-items:flex-start}
+.media-inner.eqh > figure.shot{flex:var(--ar,.5625) 1 0;min-width:0}
+.media-inner.eqh > .row-cap{flex:0 0 100%}
 /* dark card for embedded SVG animations lifted from the live site — their
    strokes/text are white, drawn for a dark ground, so the wrapper carries
    its own bg rather than inheriting the (often light) page background */

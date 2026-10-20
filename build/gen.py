@@ -18,7 +18,7 @@ MAXW = 2000
 # browsers that already fetched the old bytes at that exact path keep
 # serving them from cache instead of the replacement. Also drives the
 # style.css/main.js cache-busting query strings.
-VERSION = "118"
+VERSION = "119"
 
 _dims_cache = {}
 
@@ -45,14 +45,17 @@ def dim_attrs(path):
     return f' width="{d[0]}" height="{d[1]}"' if d else ""
 
 
-def R(items, cap=None, w=100, align="left", cols=None, mobile_cols=None):
+def R(items, cap=None, w=100, align="left", cols=None, mobile_cols=None, eqh=None):
     """A media row. items: list of 'hash.ext' or ('hash.ext','caption').
     w: width as % of the content column. align: left|center|right.
     cols: images across (default = len(items)). mobile_cols: override how
     many sit side by side at the phone breakpoint (default: the generic
     640px collapse — 2/3/4/5 across all become 2; pass 1 to stack fully, or
-    the same number as cols to force it to stay side by side)."""
-    return ("row", items, cap, {"w": w, "align": align, "cols": cols, "mobile_cols": mobile_cols})
+    the same number as cols to force it to stay side by side).
+    eqh: (width, height) of the row's video. Turns the row into equal-height
+    mode — every item keeps its own aspect ratio and all share one height,
+    so tops and bottoms line up even when the aspect ratios differ."""
+    return ("row", items, cap, {"w": w, "align": align, "cols": cols, "mobile_cols": mobile_cols, "eqh": eqh})
 
 
 def HERO(h, cap=None, w=100, align="left"):
@@ -104,7 +107,7 @@ PROJECTS = [
    R(["cw-photo-bus.jpg"], "Street bus advertising"),
    R(["696UUrCCL10cHGYVxmgXNEDrSQ.png",
       ("assets/video/canada-water-library/reel-9x16.mp4", None, "MTnnFfoY22uUGBxR0ADca9hmoU.png"),
-      "dtx3LTsoozdYbt19NBVPlL3yM.png"], "Social media posts", mobile_cols=3),
+      "dtx3LTsoozdYbt19NBVPlL3yM.png"], "Social media posts", mobile_cols=3, eqh=(1080, 1920)),
    R(["ytGMHe1AMsv83zhT6HYnVC7IR5c.jpg"]),
    R(["DdrC9p3v1l2veE75EprzTtQXcc.jpg", "UoWC1dKZbZZfgDfMRCcrU4EhgBE.jpg"],
      "'About our Library' booklet"),
@@ -392,20 +395,28 @@ def render_project(proj):
                     # a local video file used as-is, not Framer-hosted
                     for r_ in reserve:   # keep image file numbering stable when a video replaces an image
                         grab(r_)
+                    vstyle = ""
+                    if lay.get("eqh"):
+                        vstyle = f' style="--ar:{lay["eqh"][0] / lay["eqh"][1]:.5f}"'
                     figs.append(
-                        f'<figure class="shot"><video autoplay muted loop playsinline '
+                        f'<figure class="shot"{vstyle}><video autoplay muted loop playsinline '
                         f'src="../{h}?v={VERSION}"></video>{capm}</figure>')
                     continue
                 p = grab(h)
                 if not p:
                     continue
+                istyle = ""
+                if lay.get("eqh") and dims(p):
+                    istyle = f' style="--ar:{dims(p)[0] / dims(p)[1]:.5f}"'
                 figs.append(
-                    f'<figure class="shot"><img loading="lazy" decoding="async"{dim_attrs(p)} '
+                    f'<figure class="shot"{istyle}><img loading="lazy" decoding="async"{dim_attrs(p)} '
                     f'src="{rel_from_work(p)}" alt="{esc(cap or title)}">{capm}</figure>')
             if shared:
                 figs.append(f'<p class="row-cap">{esc(shared)}</p>')
             colcls = f' cols-{ncols}' if n > 1 else ' cols-1'
-            if lay.get("mobile_cols"):
+            if lay.get("eqh"):
+                colcls = ' eqh'
+            elif lay.get("mobile_cols"):
                 colcls += f' mcols-{lay["mobile_cols"]}'
             parts.append(
                 f'<div class="media-row" data-align="{lay["align"]}">'
