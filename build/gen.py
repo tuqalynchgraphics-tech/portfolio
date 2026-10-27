@@ -18,7 +18,7 @@ MAXW = 2000
 # browsers that already fetched the old bytes at that exact path keep
 # serving them from cache instead of the replacement. Also drives the
 # style.css/main.js cache-busting query strings.
-VERSION = "124"
+VERSION = "125"
 
 _dims_cache = {}
 
@@ -43,6 +43,30 @@ def dims(path):
 def dim_attrs(path):
     d = dims(path)
     return f' width="{d[0]}" height="{d[1]}"' if d else ""
+
+
+GRID_W = 1800  # a grid panel is at most ~900 CSS px wide, so 2x covers retina
+
+
+def grid_copy(src):
+    """Homepage-sized copy of a case-study image, at assets/img/<slug>/grid/.
+    The originals run up to 4000px / 7MB; the homepage loads every flick
+    frame, so it gets these instead. Rebuilt whenever the source is newer."""
+    out_dir = src.parent / "grid"
+    with Image.open(src) as im:
+        alpha = im.mode in ("RGBA", "LA", "P") and im.convert("RGBA").getextrema()[3][0] < 255
+        out = out_dir / (src.stem + (".png" if alpha else ".jpg"))
+        if out.exists() and out.stat().st_mtime >= src.stat().st_mtime:
+            return out
+        out_dir.mkdir(exist_ok=True)
+        im = im.convert("RGBA" if alpha else "RGB")
+        if im.width > GRID_W:
+            im = im.resize((GRID_W, round(im.height * GRID_W / im.width)), Image.LANCZOS)
+        if alpha:
+            im.save(out, "PNG", optimize=True)
+        else:
+            im.save(out, "JPEG", quality=82, optimize=True, progressive=True)
+    return out
 
 
 def R(items, cap=None, w=100, align="left", cols=None, mobile_cols=None, eqh=None):
@@ -538,7 +562,10 @@ def render_grid():
         d = IMG_ROOT / p["slug"]
         def fpath(idx):
             g = sorted(d.glob(idx + ".*"))
-            return (f"assets/img/{p['slug']}/{g[0].name}?v={VERSION}", g[0]) if g else (None, None)
+            if not g:
+                return (None, None)
+            small = grid_copy(g[0])
+            return (f"assets/img/{p['slug']}/grid/{small.name}?v={VERSION}", small)
         num = f"{total - n:02d}"
 
         if p.get("grid_still") and not p.get("grid_video"):

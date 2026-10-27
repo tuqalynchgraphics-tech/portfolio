@@ -231,11 +231,17 @@
       var lane = panels.map(function (panel) {
         var frames = (panel.dataset.frames || "").split(",")
           .map(function (s) { return s.trim(); }).filter(Boolean);
-        // preload + decode so the frame swap never blocks the main thread
-        frames.forEach(function (src) {
-          var im = new Image(); im.src = src;
-          if (im.decode) im.decode().catch(function () {});
-        });
+        // preload + decode so the frame swap never blocks the main thread —
+        // but only after the page has loaded, so the hidden frames don't
+        // compete with the thumbnails actually on screen
+        var warm = function () {
+          frames.forEach(function (src) {
+            var im = new Image(); im.src = src;
+            if (im.decode) im.decode().catch(function () {});
+          });
+        };
+        if (document.readyState === "complete") warm();
+        else window.addEventListener("load", warm, { once: true });
         return {
           panel: panel,
           img: panel.querySelector(".proj-media img"),
