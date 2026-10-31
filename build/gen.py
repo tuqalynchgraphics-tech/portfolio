@@ -18,7 +18,7 @@ MAXW = 2000
 # browsers that already fetched the old bytes at that exact path keep
 # serving them from cache instead of the replacement. Also drives the
 # style.css/main.js cache-busting query strings.
-VERSION = "127"
+VERSION = "128"
 
 _dims_cache = {}
 
@@ -183,6 +183,7 @@ PROJECTS = [
   "grid_label": "Brand identity · UI/UX · Product",
   "hero_video": "assets/video/holistic-transformation-management/hero.mp4",
   "grid_video": "assets/video/holistic-transformation-management/hero.mp4",
+  "grid_video_preload": "auto",   # small loop: fetch it up front so the first hover plays instantly
   "grid_still": "assets/img/holistic-transformation-management/thumb-logo.png",
   "flow": [
    HERO("hfbuvHbszQkGUeORzJdL8QLBlms.png"),
@@ -586,7 +587,7 @@ def render_grid():
             media = (
                 f'<img loading="lazy" decoding="async"{dim_attrs(ROOT / still)} '
                 f'src="{still}?v={VERSION}" alt="{esc(p["title"])}">'
-                f'<video class="proj-video" muted{loop_attr} playsinline preload="none" '
+                f'<video class="proj-video" muted{loop_attr} playsinline preload="{p.get("grid_video_preload", "none")}" '
                 f'src="{p["grid_video"]}?v={VERSION}"></video>'
             )
             frames_attr = ""
