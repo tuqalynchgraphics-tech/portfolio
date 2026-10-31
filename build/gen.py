@@ -18,7 +18,7 @@ MAXW = 2000
 # browsers that already fetched the old bytes at that exact path keep
 # serving them from cache instead of the replacement. Also drives the
 # style.css/main.js cache-busting query strings.
-VERSION = "128"
+VERSION = "129"
 
 _dims_cache = {}
 
@@ -182,9 +182,9 @@ PROJECTS = [
   "title": "Holistic Transformation Management",
   "grid_label": "Brand identity · UI/UX · Product",
   "hero_video": "assets/video/holistic-transformation-management/hero.mp4",
-  "grid_video": "assets/video/holistic-transformation-management/hero.mp4",
+  "grid_video": "assets/video/holistic-transformation-management/tile.mp4",
   "grid_video_preload": "auto",   # small loop: fetch it up front so the first hover plays instantly
-  "grid_still": "assets/img/holistic-transformation-management/thumb-logo.png",
+  "grid_still": "assets/img/holistic-transformation-management/thumb-clip.jpg",
   "flow": [
    HERO("hfbuvHbszQkGUeORzJdL8QLBlms.png"),
    ("h", "Overview"),

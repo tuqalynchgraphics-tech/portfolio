@@ -252,6 +252,28 @@
       });
       var active = -1;
 
+      // Start (or restart) the hover clip. A bare play() can be rejected, or
+      // silently paused again by the browser (clip still buffering, power
+      // saving, tab just regained focus) — in which case the tile would go
+      // colour but sit frozen on frame 1. So: retry as soon as the clip can
+      // play, and keep nudging it on later pointer movement (see pointermove
+      // below) for as long as the tile is still hovered.
+      var playClip = function (video, stillWanted) {
+        if (!video) return;
+        var go = function () {
+          if (!stillWanted()) return;
+          var pr = video.play();
+          if (pr && pr.catch) pr.catch(function () {
+            video.addEventListener("canplay", function again() {
+              video.removeEventListener("canplay", again);
+              go();
+            });
+          });
+        };
+        try { video.currentTime = 0; } catch (err) {}
+        go();
+      };
+
       var setActive = function (i) {
         if (i === active) return;
         if (active > -1) {
@@ -266,10 +288,7 @@
           row.classList.add("hovering");
           var cur = lane[i];
           cur.panel.classList.add("is-active");
-          if (cur.video) {
-            cur.video.currentTime = 0;
-            cur.video.play().catch(function () {});
-          }
+          if (cur.video) playClip(cur.video, function () { return active === i; });
           if (cur.img && cur.frames.length > 1) {
             cur.k = 0;
             cur.timer = setInterval(function () {
@@ -285,6 +304,9 @@
       row.addEventListener("pointermove", function (e) {
         var p = e.target.closest(".proj");
         setActive(p ? panels.indexOf(p) : -1);
+        // if the browser paused the hovered clip behind our back, start it again
+        var cur = active > -1 ? lane[active] : null;
+        if (cur && cur.video && cur.video.paused) cur.video.play().catch(function () {});
       }, { passive: true });
       row.addEventListener("pointerleave", function () { setActive(-1); });
       // keep keyboard users covered
