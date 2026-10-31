@@ -218,9 +218,7 @@ PROJECTS = [
   "title": "Azaz Labs",
   "white_page": True,
   "grid_label": "Web · Product · UI/UX",
-  "grid_video": "assets/video/azaz-labs/hero.mp4",
-  "grid_video_loop": False,
-  "grid_still": "assets/img/azaz-labs/01.png",
+  "grid_still": "assets/img/azaz-labs/01.png",   # static laptop mockup: greyscale at rest, colour on hover (no video)
   "flow": [
    HERO("XYYdqZQNnCt3NhgU2dny6xcADhA.png", "Site homepage"),
    ("h", "Overview"),
